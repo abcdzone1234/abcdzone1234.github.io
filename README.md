@@ -1,30 +1,46 @@
 # Atlas Guess
 
-An original, static geography guessing game made for GitHub Pages. It is not affiliated with WorldGuessr or any other game.
+Atlas Guess is an original geography game for GitHub Pages. It is not affiliated with WorldGuessr or any other game. It now includes solo play, pass-and-play, and Firebase-backed online rooms.
 
 ## Play
 
-Open the published GitHub Pages site, start exploring, read each clue, and click the map to place your guess. Each game has five randomized locations and a two-minute timer per round. Distance-based scoring awards up to 5,000 points per round.
+Visit **https://abcdzone1234.github.io/**. Solo and local pass-and-play work without an account. Game options include 5 or 10 rounds, 30/60/120-second timers, easy/mixed/expert location pools, map-pin or multiple-choice guesses, optional sound effects, a personal local stats summary, and shareable results. Online rooms support up to 8 players, invite codes/links, a lobby, host-controlled rounds, live guess status, shared timer, scoring, and a leaderboard.
 
-## Publish on GitHub Pages
+## Enable online multiplayer (Firebase setup required)
 
-This repository is named `abcdzone1234.github.io`, so its user site should be available at:
+GitHub Pages is static; online rooms need a real-time database service. This project uses Firebase Realtime Database and anonymous authentication. The Firebase web config is public client configuration, not an admin secret. **Do not put a service-account key or database admin credentials in this repository.**
 
-**https://abcdzone1234.github.io/**
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
+2. Add a Web app to the project and copy its config object.
+3. In **Build → Authentication → Sign-in method**, enable **Anonymous** sign-in.
+4. In **Build → Realtime Database**, create a database. Choose a location and start in locked/production mode.
+5. Put the app's `apiKey`, `authDomain`, `databaseURL`, `projectId`, and `appId` into `firebase-config.js`, replacing the `YOUR_...` placeholders.
+6. In Realtime Database **Rules**, use the starter rules below, then publish. These let signed-in anonymous room members read/write their room. They are suitable for a small prototype, not a competitive game: browser clients can be modified and score writes are not server-verified. For public competitive leaderboards, validate membership, room state, and scoring in trusted Cloud Functions and add abuse/rate controls.
+7. Commit the config file and wait for Pages to redeploy. Select **Online room → Create room**, share the invite link/code, and have friends join.
 
-In **Settings → Pages**, choose **Deploy from a branch**, select **main** and **/(root)**, and save. GitHub Pages may take a few minutes to publish after the first commit.
+Starter room membership rules (validate carefully before using with strangers):
 
-## Files
+```json
+{
+  "rules": {
+    "atlasRooms": {
+      "$room": {
+        ".read": "auth != null && data.child('players').child(auth.uid).exists()",
+        ".write": "auth != null && (data.child('players').child(auth.uid).exists() || newData.child('players').child(auth.uid).exists())"
+      }
+    }
+  }
+}
+```
 
-- `index.html` — page structure and map library setup
-- `styles.css` — responsive visual design
-- `game.js` — rounds, map interaction, timer, scoring, and photo lookup
+This simple starter ruleset intentionally prioritizes getting a small friends-only prototype running. Its broad room write access is not suitable for untrusted public use or rankings with prizes; a trusted server implementation is required to prevent cheating. You can still use solo/local play before configuring Firebase.
 
-## Services and credits
+## Files and services
 
-- Interactive map: [Leaflet](https://leafletjs.com/), loaded from unpkg.
-- Map tiles: [OpenStreetMap](https://www.openstreetmap.org/copyright); attribution is displayed on the map.
-- Location photos: requested at runtime from the [Wikimedia Commons API](https://commons.wikimedia.org/wiki/Commons:API) and shown with the file page and license link when available. Photos are optional; if the request fails, the round remains playable using its clue.
-- Fonts: DM Sans and DM Mono from Google Fonts, with system fallbacks.
+- `index.html`, `styles.css`, `game.js` — static game UI and logic.
+- `firebase-config.js` — replace placeholders with Firebase web app config to enable online rooms.
+- `Leaflet` from unpkg and © OpenStreetMap contributors — map display (attribution shown on-map).
+- Wikimedia Commons API — optional images with artist/license and source link shown when provided; game falls back to clue-only if no image is found.
+- Firebase Authentication and Realtime Database — anonymous identities and real-time rooms, only when configured.
 
-The game needs an internet connection for the map tiles, map library, fonts, and optional photos. It does not collect accounts or save personal data.
+The site needs an internet connection for maps, external scripts, fonts, Wikimedia photos, and online multiplayer. Personal game stats are stored locally in the browser. The game has no account system. Custom location packs can be added to the `PLACES` array in `game.js` using places/images that you have permission to use.

@@ -4,97 +4,67 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101611">
-  <meta name="description" content="A free, original geography guessing game. Study the clue, drop a pin, and see how close you get.">
-  <title>Atlas Guess — World Geography Game</title>
+  <meta name="description" content="Explore the world, test your geography, and play with friends in Atlas Guess.">
+  <title>Atlas Guess — Explore Together</title>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://tile.openstreetmap.org">
   <link rel="preconnect" href="https://commons.wikimedia.org">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="styles.css">
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script defer src="firebase-config.js"></script>
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script defer src="game.js"></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="./" aria-label="Atlas Guess home"><span class="brand-mark" aria-hidden="true">A</span><span>ATLAS <b>GUESS</b></span></a>
-    <div class="top-note"><span class="live-dot" aria-hidden="true"></span> AN ORIGINAL WORLD GAME</div>
+    <div class="top-note"><span class="live-dot" aria-hidden="true"></span> EXPLORE TOGETHER</div>
   </header>
-
   <main class="page-wrap">
     <section class="intro" aria-labelledby="page-title">
-      <div>
-        <p class="eyebrow">A LITTLE CURIOSITY GOES A LONG WAY</p>
-        <h1 id="page-title">Where in the world<br><span>are you?</span></h1>
-        <p class="intro-copy">Study the photo and clue, drop your best guess on the map, and see how close you get.</p>
-      </div>
-      <div class="stats-card" aria-label="Game details">
-        <div><strong>05</strong><span>ROUNDS</span></div>
-        <i aria-hidden="true"></i>
-        <div><strong>02:00</strong><span>PER ROUND</span></div>
-        <i aria-hidden="true"></i>
-        <div><strong>25K</strong><span>MAX SCORE</span></div>
-      </div>
+      <div><p class="eyebrow">A LITTLE CURIOSITY GOES A LONG WAY</p><h1 id="page-title">The world is<br><span>your playground.</span></h1><p class="intro-copy">Follow the clues, trust your instincts, and see who knows the world best.</p></div>
+      <div class="stats-card" aria-label="Game details"><div><strong id="stat-rounds">10</strong><span>ROUNDS</span></div><i></i><div><strong id="stat-time">01:00</strong><span>PER ROUND</span></div><i></i><div><strong>50K</strong><span>MAX SCORE</span></div></div>
     </section>
 
-    <section class="game-layout" aria-label="Geography game">
-      <div class="left-column">
-        <article class="clue-card">
-          <div class="card-head">
-            <div>
-              <p class="eyebrow">YOUR CHALLENGE</p>
-              <h2 id="round-title">Ready to explore?</h2>
-            </div>
-            <div class="round-pill" id="round-pill">ROUND <b>— / 5</b></div>
-          </div>
-          <div class="photo-wrap" id="photo-wrap">
-            <div class="photo-placeholder" id="photo-placeholder">
-              <span class="placeholder-icon" aria-hidden="true">✳</span>
-              <span>Five places. One world.<br>How well do you know it?</span>
-            </div>
-            <img id="location-photo" alt="" hidden>
-            <div class="photo-label" id="photo-label" hidden>LOCATION PHOTO</div>
-          </div>
-          <div class="clue-copy">
-            <span class="clue-icon" aria-hidden="true">✦</span>
-            <p id="clue-text">Start a round to get your first clue.</p>
-          </div>
-          <div class="photo-credit" id="photo-credit" hidden></div>
-          <div class="card-actions">
-            <button class="button button-primary" id="start-button" type="button">Start exploring <span aria-hidden="true">↗</span></button>
-            <button class="button button-primary" id="guess-button" type="button" hidden>Make my guess <span aria-hidden="true">↗</span></button>
-            <button class="button button-primary" id="next-button" type="button" hidden>Next location <span aria-hidden="true">→</span></button>
-            <p class="action-hint" id="action-hint">No account needed. Just your sense of direction.</p>
-          </div>
-        </article>
-
-        <article class="result-card" id="result-card" aria-live="polite" hidden>
-          <div class="result-icon" aria-hidden="true">✦</div>
-          <div class="result-content">
-            <p class="eyebrow" id="result-eyebrow">NICE TRY</p>
-            <h2 id="result-title">You were close!</h2>
-            <p id="result-detail"></p>
-          </div>
-          <div class="result-points"><strong id="result-points">0</strong><span>POINTS</span></div>
-        </article>
+    <section class="setup-card" id="setup-card" aria-labelledby="setup-title">
+      <div class="setup-heading"><div><p class="eyebrow">PICK YOUR ADVENTURE</p><h2 id="setup-title">Ready when you are</h2></div><span class="online-badge" id="connection-status"><i></i>Checking multiplayer…</span></div>
+      <div class="setup-grid">
+        <label class="field">Your nickname<input id="nickname" maxlength="18" autocomplete="nickname" placeholder="Map explorer" value=""></label>
+        <label class="field">Game mode<select id="mode"><option value="solo">Solo adventure</option><option value="local">Pass-and-play (2–8)</option><option value="online">Online room</option></select></label>
+        <label class="field setting-field">Rounds<select id="round-count"><option value="5">5 rounds</option><option value="10" selected>10 rounds</option></select></label>
+        <label class="field setting-field">Round timer<select id="round-time"><option value="30">30 seconds</option><option value="60" selected>60 seconds</option><option value="120">2 minutes</option></select></label>
+        <label class="field setting-field">Difficulty<select id="difficulty"><option value="mixed" selected>Mixed</option><option value="easy">Easy</option><option value="expert">Expert</option></select></label>
+        <label class="field setting-field">Guess style<select id="guess-style"><option value="map" selected>Map pin</option><option value="choice">Multiple choice</option></select></label>
       </div>
+      <div class="mode-options" id="local-options" hidden><label class="field">Players (comma-separated names)<input id="local-players" maxlength="130" placeholder="Alex, Sam, Jamie"></label></div>
+      <div class="mode-options online-options" id="online-options" hidden><label class="field">Room code<input id="room-code-input" maxlength="6" placeholder="Enter 6-letter code" autocapitalize="characters"></label><p class="field-note">Create a room to invite friends, or enter a code to join one.</p></div>
+      <div class="setup-actions"><button class="button button-primary" id="start-button" type="button">Start solo game <span>↗</span></button><button class="button button-secondary" id="join-button" type="button" hidden>Join room</button><button class="button button-secondary" id="create-button" type="button" hidden>Create room</button><button class="button button-quiet" id="sound-button" type="button" aria-pressed="false">Sound: off</button></div>
+      <p class="setup-message" id="setup-message" aria-live="polite">No account needed for solo play. Multiplayer needs Firebase setup; see README.</p>
+    </section>
 
-      <article class="map-card">
-        <div class="map-heading">
-          <div>
-            <p class="eyebrow">MAKE YOUR GUESS</p>
-            <h2>Tap the map to drop a pin</h2>
-          </div>
-          <div class="timer" id="timer" aria-label="Time remaining"><span class="timer-dot" aria-hidden="true"></span><span id="timer-text">02:00</span></div>
-        </div>
-        <div id="map" role="application" aria-label="Interactive world map. Click or tap to place your guess."></div>
-        <div class="map-footer">
-          <p id="map-message">Your pin will appear here. You can move it until you submit.</p>
-          <span class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></span>
-        </div>
+    <section class="lobby-card" id="lobby-card" hidden aria-live="polite"><div><p class="eyebrow">ROOM LOBBY</p><h2>Invite your crew</h2><p class="lobby-copy">Share this room code with your friends. Everyone needs to open this site and join the same code.</p></div><div class="room-code-line"><strong id="room-code">------</strong><button class="button button-secondary" id="copy-code" type="button">Copy invite</button></div><div class="player-list" id="player-list"></div><div class="setup-actions"><button class="button button-primary" id="host-start" type="button">Start game <span>↗</span></button><button class="button button-quiet" id="leave-room" type="button">Leave room</button></div><p class="setup-message" id="lobby-message"></p></section>
+
+    <section class="game-layout" id="game-layout" hidden aria-label="Geography game">
+      <div class="left-column">
+        <article class="clue-card"><div class="card-head"><div><p class="eyebrow" id="challenge-eyebrow">YOUR CHALLENGE</p><h2 id="round-title">Where are we?</h2></div><div class="round-pill" id="round-pill">ROUND <b>01 / 10</b></div></div>
+          <div class="photo-wrap"><div class="photo-placeholder" id="photo-placeholder"><span class="placeholder-icon">✳</span><span>Loading your location…</span></div><img id="location-photo" alt="" hidden><div class="photo-label" id="photo-label" hidden>LOCATION PHOTO</div></div>
+          <div class="clue-copy"><span class="clue-icon">✦</span><p id="clue-text"></p></div><div class="photo-credit" id="photo-credit" hidden></div>
+          <div class="choice-grid" id="choice-grid" hidden></div>
+          <div class="card-actions"><button class="button button-primary" id="guess-button" type="button" disabled>Lock in my guess <span>↗</span></button><button class="button button-primary" id="next-button" type="button" hidden>Next round <span>→</span></button><p class="action-hint" id="action-hint"></p></div>
+        </article>
+        <article class="result-card" id="result-card" aria-live="polite" hidden><div class="result-icon">✦</div><div class="result-content"><p class="eyebrow" id="result-eyebrow">ROUND COMPLETE</p><h2 id="result-title">Nice guess!</h2><p id="result-detail"></p></div><div class="result-points"><strong id="result-points">0</strong><span>POINTS</span></div></article>
+        <article class="scoreboard-card" id="scoreboard-card" hidden><div class="scoreboard-heading"><div><p class="eyebrow">THE LEADERBOARD</p><h2>Explorer standings</h2></div><button class="button button-quiet" id="share-button" type="button">Share results</button></div><ol id="scoreboard-list"></ol></article>
+      </div>
+      <article class="map-card"><div class="map-heading"><div><p class="eyebrow" id="map-eyebrow">MAKE YOUR GUESS</p><h2 id="map-title">Tap the map to drop a pin</h2></div><div class="timer" id="timer" aria-label="Time remaining"><span class="timer-dot"></span><span id="timer-text">01:00</span></div></div><div id="map" role="application" aria-label="Interactive world map. Click or tap to place your guess."></div><div class="map-footer"><p id="map-message">Your pin will appear here. Move it until you lock in your guess.</p><span class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></span></div>
+        <div class="live-players" id="live-players" hidden></div>
       </article>
     </section>
-    <footer class="page-footer"><span>ATLAS GUESS</span><span>Independent geography game · Photos from Wikimedia Commons</span></footer>
+    <footer class="page-footer"><span>ATLAS GUESS</span><span>Independent geography game · Images from Wikimedia Commons</span><button class="button button-quiet" id="stats-button" type="button">My stats</button></footer>
   </main>
-  <noscript><p class="noscript">This game needs JavaScript enabled to run.</p></noscript>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">This game needs JavaScript enabled.</p></noscript>
 </body>
 </html>

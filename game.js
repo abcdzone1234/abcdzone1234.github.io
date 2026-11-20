@@ -1,259 +1,78 @@
 (() => {
   'use strict';
-
-  const TOTAL_ROUNDS = 5;
-  const ROUND_SECONDS = 120;
+  const TOTAL_DEFAULT = 10;
   const PLACES = [
-    { name: 'Eiffel Tower', city: 'Paris, France', lat: 48.8584, lng: 2.2945, search: 'Eiffel Tower Paris', clue: 'This iron landmark was built for a world fair in the 19th century and was once intended to be temporary.' },
-    { name: 'Colosseum', city: 'Rome, Italy', lat: 41.8902, lng: 12.4922, search: 'Colosseum Rome', clue: 'This ancient arena could hold tens of thousands of spectators and hosted public spectacles.' },
-    { name: 'Taj Mahal', city: 'Agra, India', lat: 27.1751, lng: 78.0421, search: 'Taj Mahal Agra', clue: 'Built in the 17th century, this white-marble monument was commissioned as a memorial by an emperor.' },
-    { name: 'Statue of Liberty', city: 'New York City, USA', lat: 40.6892, lng: -74.0445, search: 'Statue of Liberty New York', clue: 'A gift from France, this island landmark has welcomed many visitors arriving by sea.' },
-    { name: 'Sydney Opera House', city: 'Sydney, Australia', lat: -33.8568, lng: 151.2153, search: 'Sydney Opera House Australia', clue: 'Its distinctive sail-like roof sits beside a famous harbor in the Southern Hemisphere.' },
-    { name: 'Christ the Redeemer', city: 'Rio de Janeiro, Brazil', lat: -22.9519, lng: -43.2105, search: 'Christ the Redeemer Rio de Janeiro', clue: 'This monumental statue stands high above a coastal city, with a sweeping view of its bay.' },
-    { name: 'Machu Picchu', city: 'Cusco Region, Peru', lat: -13.1631, lng: -72.5450, search: 'Machu Picchu Peru', clue: 'This historic mountain citadel was built by the Inca in the Andes.' },
-    { name: 'Great Pyramid of Giza', city: 'Giza, Egypt', lat: 29.9792, lng: 31.1342, search: 'Great Pyramid of Giza Egypt', clue: 'The oldest of the Seven Wonders of the Ancient World still stands on a desert plateau.' },
-    { name: 'Golden Gate Bridge', city: 'San Francisco, USA', lat: 37.8199, lng: -122.4783, search: 'Golden Gate Bridge San Francisco', clue: 'This orange-red suspension bridge crosses the entrance to a large Pacific coast bay.' },
-    { name: 'Mount Fuji', city: 'Honshu, Japan', lat: 35.3606, lng: 138.7274, search: 'Mount Fuji Japan', clue: 'Japan’s highest mountain is a near-symmetrical volcano and a frequent subject of art.' },
-    { name: 'Sagrada Família', city: 'Barcelona, Spain', lat: 41.4036, lng: 2.1744, search: 'Sagrada Familia Barcelona', clue: 'Construction of this elaborate basilica began in the 19th century and continued for generations.' },
-    { name: 'Chichén Itzá', city: 'Yucatán, Mexico', lat: 20.6843, lng: -88.5678, search: 'Chichen Itza Mexico', clue: 'This archaeological site includes a stepped pyramid built by the Maya civilization.' },
-    { name: 'Big Ben', city: 'London, United Kingdom', lat: 51.5007, lng: -0.1246, search: 'Elizabeth Tower Big Ben London', clue: 'This famous clock tower stands beside the River Thames and the UK Parliament.' },
-    { name: 'Angkor Wat', city: 'Siem Reap, Cambodia', lat: 13.4125, lng: 103.8670, search: 'Angkor Wat Cambodia', clue: 'This vast temple complex began as a Hindu temple and later became a Buddhist site.' }
+    {name:'Eiffel Tower',city:'Paris, France',lat:48.8584,lng:2.2945,search:'Eiffel Tower Paris',difficulty:'easy',clue:'This iron landmark was built for a world fair in the 19th century and was once intended to be temporary.'},
+    {name:'Colosseum',city:'Rome, Italy',lat:41.8902,lng:12.4922,search:'Colosseum Rome',difficulty:'easy',clue:'This ancient arena could hold tens of thousands of spectators and hosted public spectacles.'},
+    {name:'Taj Mahal',city:'Agra, India',lat:27.1751,lng:78.0421,search:'Taj Mahal Agra',difficulty:'easy',clue:'Built in the 17th century, this white-marble monument was commissioned as a memorial by an emperor.'},
+    {name:'Statue of Liberty',city:'New York City, USA',lat:40.6892,lng:-74.0445,search:'Statue of Liberty New York',difficulty:'easy',clue:'A gift from France, this island landmark has welcomed many visitors arriving by sea.'},
+    {name:'Sydney Opera House',city:'Sydney, Australia',lat:-33.8568,lng:151.2153,search:'Sydney Opera House Australia',difficulty:'easy',clue:'Its distinctive sail-like roof sits beside a famous harbor in the Southern Hemisphere.'},
+    {name:'Christ the Redeemer',city:'Rio de Janeiro, Brazil',lat:-22.9519,lng:-43.2105,search:'Christ the Redeemer Rio de Janeiro',difficulty:'mixed',clue:'This monumental statue stands high above a coastal city, with a sweeping view of its bay.'},
+    {name:'Machu Picchu',city:'Cusco Region, Peru',lat:-13.1631,lng:-72.5450,search:'Machu Picchu Peru',difficulty:'mixed',clue:'This historic mountain citadel was built by the Inca in the Andes.'},
+    {name:'Great Pyramid of Giza',city:'Giza, Egypt',lat:29.9792,lng:31.1342,search:'Great Pyramid of Giza Egypt',difficulty:'easy',clue:'The oldest of the Seven Wonders of the Ancient World still stands on a desert plateau.'},
+    {name:'Golden Gate Bridge',city:'San Francisco, USA',lat:37.8199,lng:-122.4783,search:'Golden Gate Bridge San Francisco',difficulty:'mixed',clue:'This orange-red suspension bridge crosses the entrance to a large Pacific coast bay.'},
+    {name:'Mount Fuji',city:'Honshu, Japan',lat:35.3606,lng:138.7274,search:'Mount Fuji Japan',difficulty:'easy',clue:'Japan’s highest mountain is a near-symmetrical volcano and a frequent subject of art.'},
+    {name:'Sagrada Família',city:'Barcelona, Spain',lat:41.4036,lng:2.1744,search:'Sagrada Familia Barcelona',difficulty:'mixed',clue:'Construction of this elaborate basilica began in the 19th century and continued for generations.'},
+    {name:'Chichén Itzá',city:'Yucatán, Mexico',lat:20.6843,lng:-88.5678,search:'Chichen Itza Mexico',difficulty:'mixed',clue:'This archaeological site includes a stepped pyramid built by the Maya civilization.'},
+    {name:'Big Ben',city:'London, United Kingdom',lat:51.5007,lng:-0.1246,search:'Elizabeth Tower Big Ben London',difficulty:'easy',clue:'This famous clock tower stands beside the River Thames and the UK Parliament.'},
+    {name:'Angkor Wat',city:'Siem Reap, Cambodia',lat:13.4125,lng:103.8670,search:'Angkor Wat Cambodia',difficulty:'mixed',clue:'This vast temple complex began as a Hindu temple and later became a Buddhist site.'},
+    {name:'Petra',city:'Ma’an Governorate, Jordan',lat:30.3285,lng:35.4444,search:'Petra Jordan',difficulty:'expert',clue:'An ancient trading city here is famous for monumental facades carved directly into rose-colored rock.'},
+    {name:'Table Mountain',city:'Cape Town, South Africa',lat:-33.9628,lng:18.4098,search:'Table Mountain Cape Town',difficulty:'mixed',clue:'A flat-topped mountain overlooks a coastal city near the meeting of two oceans.'},
+    {name:'Burj Khalifa',city:'Dubai, United Arab Emirates',lat:25.1972,lng:55.2744,search:'Burj Khalifa Dubai',difficulty:'easy',clue:'The world’s tallest building rises above a desert metropolis on the Persian Gulf.'},
+    {name:'Acropolis of Athens',city:'Athens, Greece',lat:37.9715,lng:23.7257,search:'Acropolis Athens Greece',difficulty:'mixed',clue:'An ancient citadel crowns a hill above the birthplace of democracy.'},
+    {name:'Moai of Rapa Nui',city:'Easter Island, Chile',lat:-27.1127,lng:-109.3497,search:'Moai Easter Island',difficulty:'expert',clue:'Giant stone figures look inland across a remote Polynesian island in the Pacific.'},
+    {name:'Mount Kilimanjaro',city:'Kilimanjaro Region, Tanzania',lat:-3.0674,lng:37.3556,search:'Mount Kilimanjaro Tanzania',difficulty:'mixed',clue:'Africa’s highest peak is a volcanic massif that rises above the surrounding plains.'},
+    {name:'Hagia Sophia',city:'Istanbul, Türkiye',lat:41.0086,lng:28.9802,search:'Hagia Sophia Istanbul',difficulty:'expert',clue:'This great domed monument has served as a church, a mosque, and a museum across centuries.'},
+    {name:'Niagara Falls',city:'Ontario / New York',lat:43.0828,lng:-79.0742,search:'Niagara Falls',difficulty:'mixed',clue:'A trio of powerful waterfalls straddles an international border in North America.'},
+    {name:'Forbidden City',city:'Beijing, China',lat:39.9163,lng:116.3972,search:'Forbidden City Beijing',difficulty:'mixed',clue:'This immense palace complex was home to Chinese emperors for nearly five centuries.'},
+    {name:'Louvre Museum',city:'Paris, France',lat:48.8606,lng:2.3376,search:'Louvre Museum Paris',difficulty:'easy',clue:'A glass pyramid marks the entrance to the world’s most visited art museum.'}
   ];
-
-  const $ = (id) => document.getElementById(id);
-  const ui = {
-    roundTitle: $('round-title'), roundPill: $('round-pill'), photo: $('location-photo'), placeholder: $('photo-placeholder'),
-    photoLabel: $('photo-label'), photoCredit: $('photo-credit'), clue: $('clue-text'), start: $('start-button'),
-    guess: $('guess-button'), next: $('next-button'), hint: $('action-hint'), timer: $('timer'), timerText: $('timer-text'),
-    mapMessage: $('map-message'), result: $('result-card'), resultEyebrow: $('result-eyebrow'), resultTitle: $('result-title'),
-    resultDetail: $('result-detail'), resultPoints: $('result-points')
-  };
-
-  let map;
-  let rounds = [];
-  let roundIndex = 0;
-  let secondsLeft = ROUND_SECONDS;
-  let scoreTotal = 0;
-  let active = false;
-  let guessMarker = null;
-  let answerMarker = null;
-  let answerLine = null;
-  let timerHandle = null;
-  let photoRequest = 0;
-
-  function initMap() {
-    if (!window.L) {
-      ui.mapMessage.textContent = 'The map library did not load. Check your connection and refresh the page.';
-      ui.start.disabled = true;
-      return;
-    }
-    map = L.map('map', { worldCopyJump: true, minZoom: 2 }).setView([20, 0], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    map.on('click', (event) => {
-      if (!active) return;
-      if (!guessMarker) {
-        guessMarker = L.circleMarker(event.latlng, { radius: 8, color: '#172010', weight: 2, fillColor: '#c9ef77', fillOpacity: 1 }).addTo(map);
-      } else {
-        guessMarker.setLatLng(event.latlng);
-      }
-      ui.mapMessage.textContent = `Your pin: ${event.latlng.lat.toFixed(2)}°, ${event.latlng.lng.toFixed(2)}°. Click elsewhere to move it.`;
-      ui.guess.disabled = false;
-    });
-  }
-
-  function shuffle(items) {
-    const copy = items.slice();
-    for (let i = copy.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
-  }
-
-  function startGame() {
-    if (!map) return;
-    rounds = shuffle(PLACES).slice(0, TOTAL_ROUNDS);
-    roundIndex = 0;
-    scoreTotal = 0;
-    ui.start.hidden = true;
-    ui.result.hidden = true;
-    showRound();
-  }
-
-  function showRound() {
-    clearInterval(timerHandle);
-    active = true;
-    secondsLeft = ROUND_SECONDS;
-    guessMarker = null;
-    answerMarker = null;
-    answerLine = null;
-    if (map) {
-      map.eachLayer((layer) => {
-        if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) map.removeLayer(layer);
-      });
-      map.setView([20, 0], 2);
-    }
-    const place = rounds[roundIndex];
-    ui.roundTitle.textContent = 'Where are we?';
-    ui.roundPill.innerHTML = `ROUND <b>${String(roundIndex + 1).padStart(2, '0')} / ${TOTAL_ROUNDS}</b>`;
-    ui.clue.textContent = place.clue;
-    ui.mapMessage.textContent = 'Click or tap anywhere on the map to place your guess.';
-    ui.guess.hidden = false;
-    ui.guess.disabled = true;
-    ui.next.hidden = true;
-    ui.hint.textContent = 'You can move your pin before submitting.';
-    ui.result.hidden = true;
-    ui.timer.classList.remove('is-low');
-    updateTimer();
-    loadPhoto(place);
-    timerHandle = setInterval(() => {
-      secondsLeft -= 1;
-      updateTimer();
-      if (secondsLeft <= 0) submitGuess(true);
-    }, 1000);
-  }
-
-  function updateTimer() {
-    const minutes = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
-    const seconds = (secondsLeft % 60).toString().padStart(2, '0');
-    ui.timerText.textContent = `${minutes}:${seconds}`;
-    ui.timer.classList.toggle('is-low', secondsLeft <= 20);
-    ui.timer.setAttribute('aria-label', `${minutes} minutes ${seconds} seconds remaining`);
-  }
-
-  async function loadPhoto(place) {
-    const requestId = ++photoRequest;
-    ui.photo.hidden = true;
-    ui.photoLabel.hidden = true;
-    ui.photoCredit.hidden = true;
-    ui.photoCredit.replaceChildren();
-    ui.placeholder.hidden = false;
-    ui.placeholder.innerHTML = '<span class="placeholder-icon" aria-hidden="true">✳</span><span>Looking for a freely licensed photo…</span>';
-    try {
-      const params = new URLSearchParams({
-        action: 'query', generator: 'search', gsrsearch: `filetype:bitmap ${place.search}`,
-        gsrnamespace: '6', gsrlimit: '12', prop: 'imageinfo', iiprop: 'url|extmetadata',
-        iiurlwidth: '1400', format: 'json', origin: '*'
-      });
-      const response = await fetch(`https://commons.wikimedia.org/w/api.php?${params}`);
-      if (!response.ok) throw new Error('Photo request failed');
-      const data = await response.json();
-      if (requestId !== photoRequest) return;
-      const pages = Object.values(data.query?.pages || {});
-      const chosen = pages.find((page) => page.imageinfo?.[0]?.thumburl && !/\.svg(?:$|\?)/i.test(page.imageinfo[0].thumburl));
-      if (!chosen) throw new Error('No matching photo found');
-      const info = chosen.imageinfo[0];
-      ui.photo.onload = () => {
-        if (requestId !== photoRequest) return;
-        ui.placeholder.hidden = true;
-        ui.photo.hidden = false;
-        ui.photoLabel.hidden = false;
-      };
-      ui.photo.onerror = () => {
-        if (requestId === photoRequest) showPhotoFallback();
-      };
-      ui.photo.alt = `Wikimedia Commons photo: ${chosen.title.replace(/^File:/, '')}`;
-      ui.photo.src = info.thumburl;
-      const fileUrl = info.descriptionurl || info.url;
-      const metadata = info.extmetadata || {};
-      const artist = stripHtml(metadata.Artist?.value || metadata.Credit?.value || 'Wikimedia Commons contributor');
-      const license = stripHtml(metadata.LicenseShortName?.value || 'See source page for license');
-      const link = document.createElement('a');
-      link.href = fileUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = 'Photo and license';
-      ui.photoCredit.append(document.createTextNode(`Photo: ${artist} · ${license} · `), link);
-      ui.photoCredit.hidden = false;
-    } catch (error) {
-      if (requestId === photoRequest) showPhotoFallback();
-    }
-  }
-
-  function stripHtml(value) {
-    const node = document.createElement('div');
-    node.innerHTML = value;
-    return (node.textContent || '').replace(/\s+/g, ' ').trim();
-  }
-
-  function showPhotoFallback() {
-    ui.photo.hidden = true;
-    ui.photoLabel.hidden = true;
-    ui.photoCredit.hidden = true;
-    ui.placeholder.hidden = false;
-    ui.placeholder.innerHTML = '<span class="placeholder-icon" aria-hidden="true">✳</span><span>Photo unavailable this round.<br>Use the clue and explore the map.</span>';
-  }
-
-  function submitGuess(timedOut = false) {
-    if (!active) return;
-    if (!guessMarker && !timedOut) {
-      ui.mapMessage.textContent = 'Drop a pin on the map first, then submit your guess.';
-      return;
-    }
-    active = false;
-    clearInterval(timerHandle);
-    const place = rounds[roundIndex];
-    const target = L.latLng(place.lat, place.lng);
-    let distance = null;
-    let points = 0;
-    if (guessMarker) {
-      distance = guessMarker.getLatLng().distanceTo(target) / 1000;
-      points = Math.round(5000 * Math.exp(-distance / 2000));
-    }
-    scoreTotal += points;
-    answerMarker = L.circleMarker(target, { radius: 9, color: '#fff', weight: 2, fillColor: '#f07457', fillOpacity: 1 }).addTo(map);
-    if (guessMarker) {
-      answerLine = L.polyline([guessMarker.getLatLng(), target], { color: '#263b25', weight: 2, dashArray: '5 7' }).addTo(map);
-      const bounds = L.latLngBounds([guessMarker.getLatLng(), target]).pad(.28);
-      map.fitBounds(bounds, { maxZoom: 6 });
-    } else {
-      map.setView(target, 5);
-    }
-    ui.roundTitle.textContent = place.name;
-    ui.mapMessage.textContent = `The answer was ${place.city}.`;
-    ui.guess.hidden = true;
-    ui.next.hidden = false;
-    ui.hint.textContent = '';
-    ui.result.hidden = false;
-    ui.resultEyebrow.textContent = timedOut && !guessMarker ? 'TIME IS UP' : 'ROUND COMPLETE';
-    ui.resultTitle.textContent = timedOut && !guessMarker ? 'No pin placed' : distance < 50 ? 'Incredible — right on target!' : distance < 300 ? 'Great sense of direction!' : distance < 1000 ? 'Not too far off!' : 'Keep exploring!';
-    ui.resultDetail.textContent = guessMarker ? `${Math.round(distance).toLocaleString()} km from ${place.name} · Total: ${scoreTotal.toLocaleString()} points` : `${place.name} is in ${place.city}. Total: ${scoreTotal.toLocaleString()} points`;
-    ui.resultPoints.textContent = points.toLocaleString();
-    ui.next.innerHTML = roundIndex === TOTAL_ROUNDS - 1 ? 'See final score <span aria-hidden="true">→</span>' : 'Next location <span aria-hidden="true">→</span>';
-  }
-
-  function nextRound() {
-    if (roundIndex < TOTAL_ROUNDS - 1) {
-      roundIndex += 1;
-      showRound();
-      return;
-    }
-    finishGame();
-  }
-
-  function finishGame() {
-    ui.next.hidden = true;
-    ui.result.hidden = false;
-    ui.roundTitle.textContent = 'Journey complete';
-    ui.roundPill.innerHTML = `FINAL <b>SCORE</b>`;
-    ui.clue.textContent = `You explored five places and scored ${scoreTotal.toLocaleString()} out of 25,000 points.`;
-    ui.resultEyebrow.textContent = 'GAME COMPLETE';
-    ui.resultTitle.textContent = scoreTotal >= 20000 ? 'World-class explorer!' : scoreTotal >= 12000 ? 'A brilliant trip around the world!' : 'Every round is a new adventure.';
-    ui.resultDetail.textContent = 'Want another trip? Your next set of places will be different.';
-    ui.resultPoints.textContent = scoreTotal.toLocaleString();
-    ui.start.hidden = false;
-    ui.start.innerHTML = 'Play again <span aria-hidden="true">↗</span>';
-    ui.hint.textContent = '';
-    ui.mapMessage.textContent = 'Start again to explore a fresh set of places.';
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    initMap();
-    ui.start.addEventListener('click', startGame);
-    ui.guess.addEventListener('click', () => submitGuess(false));
-    ui.next.addEventListener('click', nextRound);
+  const $=id=>document.getElementById(id);
+  const ui={};
+  ['setup-card','setup-message','mode','nickname','round-count','round-time','difficulty','guess-style','local-options','local-players','online-options','room-code-input','start-button','join-button','create-button','sound-button','connection-status','lobby-card','room-code','copy-code','player-list','host-start','leave-room','lobby-message','game-layout','round-title','round-pill','photo','photo-placeholder','photo-label','photo-credit','clue-text','choice-grid','guess-button','next-button','action-hint','result-card','result-eyebrow','result-title','result-detail','result-points','scoreboard-card','scoreboard-list','share-button','stats-button','timer','timer-text','map-message','map-title','map-eyebrow','live-players','stat-rounds','stat-time','toast'].forEach(id=>ui[id.replace(/-([a-z])/g,(_,c)=>c.toUpperCase())]=$(id));
+  let map,marker,answerMarker,line,rounds=[],roundIndex=0,secondsLeft=60,timerHandle=null,active=false,guessPoint=null,selectedChoice=null,score=0,players=[],localIndex=0,mode='solo',style='map',difficulty='mixed',roomRef=null,roomUnsub=null,roomState=null,uid=null,isHost=false,soundOn=false,photoRequest=0,lastResolvedRound=-1;
+  const dbReady=()=>window.ATLAS_FIREBASE_CONFIG?.apiKey&&!window.ATLAS_FIREBASE_CONFIG.apiKey.startsWith('YOUR_')&&window.firebase;
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function toast(text){ui.toast.textContent=text;ui.toast.classList.add('show');setTimeout(()=>ui.toast.classList.remove('show'),2600)}
+  function sound(freq=520){if(!soundOn)return;try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.18);o.start();o.stop(c.currentTime+.18)}catch(_){}}
+  function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+  function choosePlaces(n,diff){let pool=PLACES.filter(p=>diff==='mixed'||p.difficulty===diff);if(pool.length<n)pool=PLACES.slice();return shuffle(pool).slice(0,n)}
+  function initMap(){if(!window.L){ui.mapMessage.textContent='Map failed to load. You can still play multiple choice rounds.';return}map=L.map('map',{worldCopyJump:true,minZoom:2}).setView([20,0],2);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'}).addTo(map);map.on('click',e=>{if(!active||style!=='map'||mode==='online'&&roomState?.revealed)return;guessPoint={lat:e.latlng.lat,lng:e.latlng.lng};if(!marker)marker=L.circleMarker(e.latlng,{radius:8,color:'#172010',weight:2,fillColor:'#c9ef77',fillOpacity:1}).addTo(map);else marker.setLatLng(e.latlng);ui.mapMessage.textContent=`Pin: ${e.latlng.lat.toFixed(2)}°, ${e.latlng.lng.toFixed(2)}°. Tap elsewhere to move it.`;ui.guessButton.disabled=false})}
+  function updateOptions(){const m=ui.mode.value;ui.localOptions.hidden=m!=='local';ui.onlineOptions.hidden=m!=='online';ui.startButton.hidden=m==='online';ui.joinButton.hidden=m!=='online';ui.createButton.hidden=m!=='online';ui.startButton.innerHTML=m==='local'?'Start local game <span>↗</span>':'Start solo game <span>↗</span>';if(m==='online'&&!dbReady())ui.setupMessage.textContent='Online mode needs Firebase setup. Follow the short README steps; solo and local games work now.';else ui.setupMessage.textContent='No account needed for solo/local play.'}
+  function updateStats(){ui.statRounds.textContent=ui.roundCount.value;const t=Number(ui.roundTime.value);ui.statTime.textContent=`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`}
+  function beginLocal(){mode=ui.mode.value;style=ui.guessStyle.value;difficulty=ui.difficulty.value;const names=mode==='local'?ui.localPlayers.value.split(',').map(x=>x.trim()).filter(Boolean):[ui.nickname.value.trim()||'Explorer'];players=(names.length?names:['Explorer']).slice(0,8).map((name,i)=>({name:name.slice(0,18),score:0,id:`local-${i}`}));localIndex=0;rounds=choosePlaces(Number(ui.roundCount.value),difficulty);roundIndex=0;score=0;ui.setupCard.hidden=true;ui.gameLayout.hidden=false;ui.scoreboardCard.hidden=true;map?.invalidateSize();showRound()}
+  function showRound(){clearInterval(timerHandle);active=true;guessPoint=null;selectedChoice=null;marker=null;answerMarker=null;line=null;secondsLeft=Number(ui.roundTime.value);if(map){map.eachLayer(l=>{if(l instanceof L.CircleMarker||l instanceof L.Polyline)map.removeLayer(l)});map.setView([20,0],2)}const p=rounds[roundIndex];ui.roundTitle.textContent=mode==='local'?`${players[localIndex].name}, where are we?`:'Where are we?';ui.roundPill.innerHTML=`ROUND <b>${String(roundIndex+1).padStart(2,'0')} / ${rounds.length}</b>`;ui.clueText.textContent=p.clue;ui.mapMessage.textContent=style==='map'?'Click or tap the map to place your guess.':'Choose an answer below.';ui.mapTitle.textContent=style==='map'?'Tap the map to drop a pin':'Choose the location';ui.mapEyebrow.textContent=style==='map'?'MAKE YOUR GUESS':'MULTIPLE CHOICE';ui.choiceGrid.hidden=style!=='choice';ui.guessButton.hidden=style==='choice';ui.guessButton.disabled=true;ui.nextButton.hidden=true;ui.actionHint.textContent=mode==='local'?'Pass the device to the current explorer after each guess.':'You can change your pin before locking in.';ui.resultCard.hidden=true;ui.livePlayers.hidden=true;ui.timer.classList.remove('is-low');renderChoices(p);loadPhoto(p);tick();timerHandle=setInterval(()=>{secondsLeft--;tick();if(secondsLeft<=0)submitLocal(true)},1000)}
+  function renderChoices(p){ui.choiceGrid.replaceChildren();if(style!=='choice')return;const choices=shuffle([p,...shuffle(PLACES.filter(x=>x!==p)).slice(0,3)]);choices.forEach(place=>{const b=document.createElement('button');b.type='button';b.className='choice-button';b.textContent=place.name;b.addEventListener('click',()=>{if(!active)return;selectedChoice=place.name;[...ui.choiceGrid.children].forEach(x=>x.classList.toggle('selected',x===b));ui.guessButton.disabled=false});ui.choiceGrid.append(b)})}
+  function tick(){const m=String(Math.floor(secondsLeft/60)).padStart(2,'0'),s=String(secondsLeft%60).padStart(2,'0');ui.timerText.textContent=`${m}:${s}`;ui.timer.classList.toggle('is-low',secondsLeft<=10);ui.timer.setAttribute('aria-label',`${m} minutes ${s} seconds remaining`)}
+  async function loadPhoto(p){const req=++photoRequest;ui.photo.hidden=true;ui.photoLabel.hidden=true;ui.photoCredit.hidden=true;ui.photoPlaceholder.hidden=false;ui.photoPlaceholder.innerHTML='<span class="placeholder-icon">✳</span><span>Finding a freely licensed photo…</span>';try{const q=new URLSearchParams({action:'query',generator:'search',gsrsearch:`filetype:bitmap ${p.search}`,gsrnamespace:'6',gsrlimit:'10',prop:'imageinfo',iiprop:'url|extmetadata',iiurlwidth:'1200',format:'json',origin:'*'});const r=await fetch(`https://commons.wikimedia.org/w/api.php?${q}`);if(!r.ok)throw Error();const d=await r.json();if(req!==photoRequest)return;const page=Object.values(d.query?.pages||{}).find(x=>x.imageinfo?.[0]?.thumburl&&!/\.svg(?:$|\?)/i.test(x.imageinfo[0].thumburl));if(!page)throw Error();const info=page.imageinfo[0];ui.photo.onload=()=>{if(req===photoRequest){ui.photoPlaceholder.hidden=true;ui.photo.hidden=false;ui.photoLabel.hidden=false}};ui.photo.onerror=()=>fallback(req);ui.photo.src=info.thumburl;ui.photo.alt=`Wikimedia Commons: ${page.title.replace(/^File:/,'')}`;const md=info.extmetadata||{},artist=(md.Artist?.value||md.Credit?.value||'Wikimedia Commons contributor').replace(/<[^>]*>/g,'').trim(),license=(md.LicenseShortName?.value||'See file page for license').replace(/<[^>]*>/g,'');const a=document.createElement('a');a.href=info.descriptionurl||info.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Source and license';ui.photoCredit.replaceChildren(document.createTextNode(`Photo: ${artist} · ${license} · `),a);ui.photoCredit.hidden=false}catch(_){fallback(req)}}
+  function fallback(req){if(req!==photoRequest)return;ui.photo.hidden=true;ui.photoPlaceholder.hidden=false;ui.photoPlaceholder.innerHTML='<span class="placeholder-icon">✳</span><span>Photo unavailable. Use the clue and explore!</span>';ui.photoCredit.hidden=true}
+  function distanceKm(a,b){const r=Math.PI/180,dLat=(b.lat-a.lat)*r,dLng=(b.lng-a.lng)*r,x=Math.sin(dLat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLng/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+  function calculate(p,point,choice){if(style==='choice')return choice===p.name?5000:0;if(!point)return 0;return Math.round(5000*Math.exp(-distanceKm(point,p)/2000))}
+  function submitLocal(timeout=false){if(!active)return;if(style==='map'&&!guessPoint&&!timeout){ui.mapMessage.textContent='Place a pin before locking in your guess.';return}if(style==='choice'&&!selectedChoice&&!timeout){ui.actionHint.textContent='Choose an answer first.';return}active=false;clearInterval(timerHandle);const p=rounds[roundIndex],pts=calculate(p,guessPoint,selectedChoice);score+=pts;players[localIndex].score+=pts;revealVisual(p,guessPoint);ui.resultCard.hidden=false;ui.resultEyebrow.textContent=timeout?'TIME IS UP':'ROUND COMPLETE';ui.resultTitle.textContent=style==='choice'?(selectedChoice===p.name?'Correct answer!':'The answer was '+p.name):pts>4500?'Right on target!':pts>2500?'Great sense of direction!':'Keep exploring!';ui.resultDetail.textContent=style==='choice'?`${p.city} · Your score: ${score.toLocaleString()}`:`${guessPoint?`${Math.round(distanceKm(guessPoint,p)).toLocaleString()} km away · `:''}${p.city} · Total: ${players[localIndex].score.toLocaleString()} points`;ui.resultPoints.textContent=pts.toLocaleString();ui.nextButton.hidden=false;ui.nextButton.innerHTML=roundIndex===rounds.length-1?'Finish game <span>→</span>':'Continue <span>→</span>';[...ui.choiceGrid.children].forEach(b=>{if(b.textContent===p.name)b.classList.add('correct');else if(b.classList.contains('selected'))b.classList.add('wrong')});sound(pts>2500?740:260);renderScoreboard(players)}
+  function revealVisual(p,point){if(style==='map'&&map){const target=L.latLng(p.lat,p.lng);answerMarker=L.circleMarker(target,{radius:9,color:'#fff',weight:2,fillColor:'#f07457',fillOpacity:1}).addTo(map);if(point){line=L.polyline([[point.lat,point.lng],target],{color:'#263b25',weight:2,dashArray:'5 7'}).addTo(map);map.fitBounds(L.latLngBounds([[point.lat,point.lng],target]).pad(.28),{maxZoom:6})}else map.setView(target,4)}ui.mapMessage.textContent=`Answer: ${p.name} — ${p.city}.`}
+  function nextLocal(){if(mode==='local'&&localIndex<players.length-1){localIndex++;showRound();return}if(roundIndex<rounds.length-1){roundIndex++;localIndex=0;showRound();return}finishLocal()}
+  function renderScoreboard(list){const sorted=list.slice().sort((a,b)=>b.score-a.score);ui.scoreboardList.replaceChildren(...sorted.map((p,i)=>{const li=document.createElement('li');li.innerHTML=`<span class="rank-name"><span class="rank-num">${String(i+1).padStart(2,'0')}</span>${esc(p.name)}</span><strong class="rank-score">${Number(p.score).toLocaleString()}</strong>`;return li}));ui.scoreboardCard.hidden=false}
+  function finishLocal(){clearInterval(timerHandle);active=false;ui.nextButton.hidden=true;ui.guessButton.hidden=true;ui.roundTitle.textContent='Adventure complete';ui.roundPill.innerHTML='FINAL <b>SCORE</b>';ui.clueText.textContent=`${rounds.length} locations explored. Great work!`;ui.resultEyebrow.textContent='GAME COMPLETE';ui.resultTitle.textContent='Your trip around the world';ui.resultDetail.textContent=`${players.length===1?'Save your result and play again.':'The explorer leaderboard is ready.'} Final score: ${players.reduce((n,p)=>n+p.score,0).toLocaleString()}.`;ui.resultPoints.textContent=Math.max(...players.map(p=>p.score)).toLocaleString();renderScoreboard(players);saveStats(players.reduce((n,p)=>n+p.score,0),rounds.length);ui.actionHint.textContent='';shareText(players);}
+  function saveStats(points,n){const old=JSON.parse(localStorage.getItem('atlasStats')||'{"games":0,"points":0,"best":0}');old.games++;old.points+=points;old.best=Math.max(old.best,points);localStorage.setItem('atlasStats',JSON.stringify(old))}
+  function shareText(list){ui.shareButton.onclick=async()=>{const text=`I just played Atlas Guess! ${list.map(p=>`${p.name}: ${p.score.toLocaleString()}`).join(' · ')} Play at ${location.href}`;try{if(navigator.share)await navigator.share({title:'Atlas Guess results',text});else{await navigator.clipboard.writeText(text);toast('Results copied to clipboard!')}}catch(_){}}}
+  async function startOnline(create){if(!dbReady()){ui.setupMessage.textContent='Online rooms are not configured yet. Add your Firebase web app settings in firebase-config.js; see README.md.';return}try{if(!firebase.apps.length)firebase.initializeApp(window.ATLAS_FIREBASE_CONFIG);const auth=firebase.auth();const credential=auth.currentUser?{user:auth.currentUser}:await auth.signInAnonymously();uid=credential.user.uid;const db=firebase.database();const name=(ui.nickname.value.trim()||'Explorer').slice(0,18);if(create){const code=Math.random().toString(36).slice(2,8).toUpperCase();roomRef=db.ref(`atlasRooms/${code}`);const num=Number(ui.roundCount.value),secs=Number(ui.roundTime.value);const places=choosePlaces(num,ui.difficulty.value);const packed=places.map(p=>({name:p.name,city:p.city,lat:p.lat,lng:p.lng,search:p.search,difficulty:p.difficulty,clue:p.clue}));await roomRef.set({host:uid,status:'lobby',createdAt:firebase.database.ServerValue.TIMESTAMP,settings:{rounds:num,seconds:secs,style:ui.guessStyle.value,difficulty:ui.difficulty.value},players:{[uid]:{name,joinedAt:firebase.database.ServerValue.TIMESTAMP}},places:packed,round:0,deadline:0,revealed:false,guesses:{},scores:{[uid]:0}});isHost=true}else{const code=ui.roomCodeInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');if(code.length!==6)throw Error('Enter the 6-letter room code.');roomRef=db.ref(`atlasRooms/${code}`);const snap=await roomRef.once('value');if(!snap.exists())throw Error('Room not found. Check the code.');const data=snap.val();if(data.status!=='lobby')throw Error('That game has already started.');const count=Object.keys(data.players||{}).length;if(count>=8)throw Error('This room is full (8 players maximum).');await roomRef.child(`players/${uid}`).set({name,joinedAt:firebase.database.ServerValue.TIMESTAMP});await roomRef.child(`scores/${uid}`).set(0);isHost=false}ui.setupCard.hidden=true;ui.lobbyCard.hidden=false;ui.roomCode.textContent=roomRef.key;ui.hostStart.hidden=!isHost;ui.lobbyMessage.textContent=isHost?'You are the host. Start when everyone is ready.':'Waiting for the host to start…';ui.copyCode.onclick=async()=>{const link=`${location.origin}${location.pathname}?room=${roomRef.key}`;try{await navigator.clipboard.writeText(link);toast('Invite link copied!')}catch(_){toast(`Room code: ${roomRef.key}`)}};subscribeRoom()}catch(e){ui.setupMessage.textContent=e.message||'Could not connect to multiplayer. Check your Firebase setup and try again.'}}
+  function subscribeRoom(){if(roomUnsub)roomUnsub();const code=roomRef.key;roomUnsub=roomRef.on('value',snap=>{if(!snap.exists()){toast('Room closed.');leaveRoom(false);return}roomState=snap.val();ui.roomCode.textContent=code;const entries=Object.entries(roomState.players||{});ui.playerList.replaceChildren(...entries.map(([id,p])=>{const row=document.createElement('div');row.className='player-row';row.innerHTML=`<span>${esc(p.name||'Explorer')} ${id===roomState.host?'★':''}</span><span class="player-status">${id===uid?'You':'Ready'}</span>`;return row}));if(roomState.status==='playing'){ui.lobbyCard.hidden=true;ui.gameLayout.hidden=false;mode='online';map?.invalidateSize();syncOnline(roomState)}if(roomState.status==='finished'){finishOnline(roomState)}},e=>{ui.lobbyMessage.textContent=`Room connection error: ${e.message}`})}
+  async function hostStart(){if(!isHost||!roomRef)return;const secs=Number(roomState.settings.seconds);await roomRef.update({status:'playing',round:0,revealed:false,deadline:Date.now()+secs*1000,guesses:{},scores:Object.fromEntries(Object.keys(roomState.players||{}).map(id=>[id,0]))})}
+  function syncOnline(state){if(!state||!state.places?.length)return;const newRound=roundIndex!==state.round||!rounds.length;if(newRound){roundIndex=state.round;rounds=state.places;style=state.settings.style;secondsLeft=state.settings.seconds;active=state.status==='playing'&&!state.revealed;showOnlineRound(state)}active=state.status==='playing'&&!state.revealed;const g=state.guesses?.[state.round]||{};const playersNow=Object.entries(state.players||{});ui.livePlayers.hidden=false;ui.livePlayers.textContent=playersNow.map(([id,p])=>`${p.name}: ${g[id]?'guess locked':'choosing…'}`).join('  ·  ');if(state.revealed){active=false;clearInterval(timerHandle);const p=rounds[state.round];const my=g[uid];if(my){const pts=Number(state.scores?.[uid]||0);ui.resultCard.hidden=false;ui.resultEyebrow.textContent='ROUND COMPLETE';ui.resultTitle.textContent='The room has guessed!';ui.resultDetail.textContent=`Answer: ${p.name}, ${p.city} · Your score: ${pts.toLocaleString()}`;ui.resultPoints.textContent=Number(my.points||0).toLocaleString();revealVisual(p,my.point||null)}ui.guessButton.hidden=true;ui.nextButton.hidden=false;ui.nextButton.disabled=!isHost;ui.nextButton.textContent=isHost?(state.round===rounds.length-1?'Finish game':'Next round'):'Waiting for host…';ui.actionHint.textContent=isHost?'Reveal is shared. Continue when everyone has seen the result.':'The host controls the next round.';renderOnlineBoard(state)}else{ui.nextButton.hidden=true;ui.guessButton.hidden=false;ui.guessButton.disabled=Boolean(g[uid])||(!guessPoint&&style==='map'&&!selectedChoice);if(g[uid])ui.actionHint.textContent='Guess locked in — waiting for everyone else.';else ui.actionHint.textContent='Lock in your guess before the timer ends.';const left=Math.max(0,Math.ceil((state.deadline-Date.now())/1000));secondsLeft=left;tick();if(timerHandle)clearInterval(timerHandle);timerHandle=setInterval(()=>{const remaining=Math.max(0,Math.ceil((state.deadline-Date.now())/1000));secondsLeft=remaining;tick();if(remaining===0&&isHost)maybeReveal(state)},500)}}
+  function showOnlineRound(state){clearInterval(timerHandle);guessPoint=null;selectedChoice=null;marker=null;answerMarker=null;line=null;if(map){map.eachLayer(l=>{if(l instanceof L.CircleMarker||l instanceof L.Polyline)map.removeLayer(l)});map.setView([20,0],2)}const p=rounds[state.round];ui.roundTitle.textContent='Where are we?';ui.roundPill.innerHTML=`ROUND <b>${String(state.round+1).padStart(2,'0')} / ${rounds.length}</b>`;ui.clueText.textContent=p.clue;ui.mapTitle.textContent=style==='map'?'Tap the map to drop a pin':'Choose the location';ui.mapEyebrow.textContent=style==='map'?'MAKE YOUR GUESS':'MULTIPLE CHOICE';ui.choiceGrid.hidden=style!=='choice';ui.guessButton.hidden=false;ui.resultCard.hidden=true;ui.nextButton.hidden=true;ui.mapMessage.textContent='Your pin is private until everyone has guessed.';renderChoices(p);loadPhoto(p)}
+  async function lockOnline(){if(!roomRef||!roomState||roomState.revealed)return;if(style==='map'&&!guessPoint){ui.mapMessage.textContent='Place a pin on the map first.';return}if(style==='choice'&&!selectedChoice){ui.actionHint.textContent='Choose an answer first.';return}const p=rounds[roomState.round],pts=calculate(p,guessPoint,selectedChoice);const point=style==='map'?guessPoint:{choice:selectedChoice};try{await roomRef.child(`guesses/${roomState.round}/${uid}`).set({point,choice:selectedChoice||null,points:pts,submittedAt:firebase.database.ServerValue.TIMESTAMP});ui.guessButton.disabled=true;ui.actionHint.textContent='Guess locked in — waiting for everyone else.';sound(620);const fresh=(await roomRef.once('value')).val();maybeReveal(fresh)}catch(e){toast('Could not submit guess. Check your connection.')}}
+  async function maybeReveal(state){if(!isHost||!roomRef||!state||state.revealed)return;const guesses=state.guesses?.[state.round]||{},playerIds=Object.keys(state.players||{}),all=playerIds.every(id=>guesses[id]);if(!all&&Date.now()<state.deadline)return;const updates={revealed:true};const prev=state.scores||{};playerIds.forEach(id=>{const pts=Number(guesses[id]?.points||0);updates[`scores/${id}`]=Number(prev[id]||0)+pts});await roomRef.update(updates)}
+  function renderOnlineBoard(state){const list=Object.entries(state.players||{}).map(([id,p])=>({name:p.name||'Explorer',score:Number(state.scores?.[id]||0)}));renderScoreboard(list)}
+  async function advanceOnline(){if(!isHost||!roomRef||!roomState)return;if(roomState.round>=roomState.places.length-1){await roomRef.update({status:'finished'});return}const next=roomState.round+1;await roomRef.update({round:next,revealed:false,deadline:Date.now()+Number(roomState.settings.seconds)*1000})}
+  function finishOnline(state){clearInterval(timerHandle);active=false;ui.lobbyCard.hidden=true;ui.gameLayout.hidden=false;ui.guessButton.hidden=true;ui.nextButton.hidden=true;ui.resultCard.hidden=false;ui.roundTitle.textContent='Adventure complete';ui.roundPill.innerHTML='FINAL <b>SCORE</b>';ui.clueText.textContent='The room has explored the world. Here are the final standings.';ui.resultEyebrow.textContent='GAME COMPLETE';ui.resultTitle.textContent='The explorer leaderboard';const mine=Number(state.scores?.[uid]||0);ui.resultDetail.textContent=`You scored ${mine.toLocaleString()} points. Share the game with your friends and play again!`;ui.resultPoints.textContent=mine.toLocaleString();renderOnlineBoard(state);saveStats(mine,state.places?.length||0);shareText(Object.entries(state.players||{}).map(([id,p])=>({name:p.name,score:Number(state.scores?.[id]||0)})))}
+  async function leaveRoom(showSetup=true){clearInterval(timerHandle);if(roomRef&&uid){try{await roomRef.child(`players/${uid}`).remove();await roomRef.child(`scores/${uid}`).remove()}catch(_){}}if(roomRef&&roomUnsub)roomRef.off('value',roomUnsub);roomRef=null;roomUnsub=null;roomState=null;uid=null;if(showSetup){ui.lobbyCard.hidden=true;ui.gameLayout.hidden=true;ui.setupCard.hidden=false}}
+  function showStats(){const s=JSON.parse(localStorage.getItem('atlasStats')||'{"games":0,"points":0,"best":0}');toast(`Games: ${s.games} · Best score: ${Number(s.best).toLocaleString()} · Total points: ${Number(s.points).toLocaleString()}`)}
+  function startFromUrl(){const code=new URLSearchParams(location.search).get('room');if(code){ui.mode.value='online';ui.roomCodeInput.value=code;updateOptions()}}
+  document.addEventListener('DOMContentLoaded',()=>{
+    initMap();updateOptions();updateStats();startFromUrl();
+    if(dbReady()){ui.connectionStatus.innerHTML='<i></i>Online multiplayer ready';}else{ui.connectionStatus.classList.add('offline');ui.connectionStatus.innerHTML='<i></i>Multiplayer setup needed'}
+    ui.mode.addEventListener('change',updateOptions);ui.roundCount.addEventListener('change',updateStats);ui.roundTime.addEventListener('change',updateStats);
+    ui.startButton.addEventListener('click',beginLocal);ui.createButton.addEventListener('click',()=>startOnline(true));ui.joinButton.addEventListener('click',()=>startOnline(false));ui.hostStart.addEventListener('click',hostStart);ui.leaveRoom.addEventListener('click',()=>leaveRoom());ui.guessButton.addEventListener('click',()=>mode==='online'?lockOnline():submitLocal(false));ui.nextButton.addEventListener('click',()=>mode==='online'?advanceOnline():nextLocal());ui.soundButton.addEventListener('click',()=>{soundOn=!soundOn;ui.soundButton.textContent=`Sound: ${soundOn?'on':'off'}`;ui.soundButton.setAttribute('aria-pressed',String(soundOn));sound()});ui.statsButton.addEventListener('click',showStats);ui.shareButton.addEventListener('click',()=>{});
+    document.addEventListener('keydown',e=>{if(e.key==='Enter'&&active&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='SELECT'){if(mode==='online')lockOnline();else submitLocal(false)}if(e.key==='Escape'&&roomRef)leaveRoom()});
   });
 })();
